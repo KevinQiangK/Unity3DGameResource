@@ -48,6 +48,27 @@ namespace GameResource
 			}
 		}
 
+		//get asset bundle
+		public AssetBundle GetAssetBundle(string name)
+		{
+			if(this.m_mapRes.ContainsKey(name))
+			{
+				return this.m_mapRes[name];
+			}
+			return null;
+		}
+
+		//Clear
+		public void Clear()
+		{
+			foreach( KeyValuePair<string,AssetBundle> item in this.m_mapRes )
+			{
+				item.Value.Unload(false);
+			}
+			this.m_mapRes.Clear();
+			this.m_AbRequest = null;
+		}
+
 		//request
 		public void Request(List<string> paths ,FINISH_CALLBACK finish_callback = null , ERROR_CALLBACK error_callback = null)
 		{
@@ -58,7 +79,7 @@ namespace GameResource
 			for(int i = 0 ; i < paths.Count ; i++)
 			{
 				string path = paths[i];
-				if(!this.m_mapRes.ContainKey(path))
+				if(!this.m_mapRes.ContainsKey(path))
 				{
 					this.m_mapRes.Add(path,null);
 					this.m_AbRequest.Request(path);
@@ -69,7 +90,7 @@ namespace GameResource
 		//request finish callback
 		private void RequestFinishCallback(Dictionary<string,AssetBundle> res)
 		{
-			foreach( KeyValePair<string,AssetBundle> item in res )
+			foreach( KeyValuePair<string,AssetBundle> item in res )
 			{
 				this.m_mapRes[item.Key] = item.Value;
 			}

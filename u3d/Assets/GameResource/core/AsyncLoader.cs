@@ -14,13 +14,21 @@ namespace GameResource
     // Async Load The AssetBundle
     public class AsyncLoader : MonoBehaviour
     {
-        public delegate FINISH_CALLBACK(string name, UnityEngine.Object obj);
+        public delegate void FINISH_CALLBACK(string name, UnityEngine.Object obj);
 
         private static GameObject sGoInstance;  //singleton gameobject instance
 
         private float m_fProgress;  //progress
         private FINISH_CALLBACK m_delFinishCallback;    //finish callback
         private AssetBundleRequest m_cRequest;  //The load request
+
+        public float Progress
+        {
+            get
+            {
+                return this.m_fProgress;
+            }
+        }
 
         //Start async load the assetbundle
         public static AsyncLoader StartLoad(AssetBundle asset, string resName , FINISH_CALLBACK finish_callback)
@@ -48,13 +56,12 @@ namespace GameResource
             }
             this.m_fProgress = 1;
 
-            GameObject.Destroy(this);
-        }
+            if(this.m_delFinishCallback != null)
+            {
+                this.m_delFinishCallback(resName , this.m_cRequest.asset);
+            }
 
-        //Get the progress of the async loading
-        public float GetProgress()
-        {
-            return this.m_fProgress;
+            GameObject.Destroy(this.gameObject);
         }
     }
 

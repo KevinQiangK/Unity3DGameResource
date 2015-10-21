@@ -25,6 +25,20 @@ namespace GameResource
 		private List<AssetBundleLoader> m_lstLoader = new List<AssetBundleLoader>();	//list loader
 		private Dictionary<string , AssetBundle> m_mapRes = new Dictionary<string, AssetBundle>();	//the resource map
 
+		public float Progress
+		{
+			get
+			{
+				float sum = 0;
+				for(int i = 0; i<this.m_lstLoader.Count ; i++)
+				{
+					AssetBundleLoader abl = this.m_lstLoader[i];
+					sum += abl.Progress;
+				}
+				return sum / this.m_lstLoader.Count;
+			}
+		}
+
 		//create request
 		public static AbRequest Create(FINISH_CALLBACK finish_callback = null , ERROR_CALLBACK error_callback = null)
 		{
@@ -48,6 +62,25 @@ namespace GameResource
 				this.m_lstPath.Add(path);
 				this.m_mapRes.Add(path,null);
 			}
+		}
+
+		//disport
+		public void Disport()
+		{
+			this.m_lstLoader.Clear();
+			foreach( KeyValuePair<string,AssetBundle> item in this.m_mapRes )
+			{
+				item.Value.Unload(false);
+			}
+			this.m_mapRes.Clear();
+		}
+
+		//get asset bundle
+		public AssetBundle GetAssetBundle(string name)
+		{
+			if(this.m_mapRes.ContainsKey(name))
+				return this.m_mapRes[name];
+			return null;
 		}
 
 		//error callback
